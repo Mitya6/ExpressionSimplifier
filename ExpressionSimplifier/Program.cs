@@ -13,28 +13,35 @@ namespace ExpressionSimplifier
             String path = "Input.txt";
             List<String> lines = LineByLineReader.ReadInput(path);
 
-            List<ExpressionTree> trees = new List<ExpressionTree>();
+            List<TreeNode> trees = new List<TreeNode>();
             foreach (String line in lines)
             {
-                trees.Add(new ExpressionTree(line));
+                trees.Add(ExpressionParser.Parse(line));
             }
 
 
             foreach (var item in trees)
             {
+                Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
                 Dimension dim;
                 try
                 {
-                    dim = item.GetDimensions();
+                    dim = item.GetDimension();
+                    Console.WriteLine("dim: [" + dim.N + "," + dim.M + "]\n");
                 }
                 catch (ApplicationException appEx)
                 {
-                    Console.WriteLine(appEx.Message);
-                    continue;
+                    Console.WriteLine(appEx.Message + "\n");
                 }
-                Console.WriteLine("\n\n [" + dim.N + "," + dim.M + "]");
-                Console.WriteLine(item.ToString());
+                finally
+                {
+                    Console.WriteLine(item.ToString());
+                }
+
             }
+
+            Console.ReadKey();
         }
     }
 }

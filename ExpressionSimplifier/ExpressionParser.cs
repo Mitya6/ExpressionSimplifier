@@ -21,6 +21,11 @@ namespace ExpressionSimplifier
         /// <returns></returns>
         public static TreeNode Parse(String expression)
         {
+            return Parse(expression, false, false);
+        }
+        
+        private static TreeNode Parse(String expression, bool isParentSubtraction, bool isParentDivision)
+        {
             RemoveOuterParentheses(ref expression);
 
             TreeNode node = null;
@@ -43,26 +48,52 @@ namespace ExpressionSimplifier
             if (expression.Contains(','))
             {
                 String[] parts = expression.Split(new char[] { ',' });
-                node = new Matrix(Regex.Match(expression, @"[a-zA-Z]+").Value,
+                /*node = new Matrix(Regex.Match(expression, @"[a-zA-Z]+").Value,
                     Int32.Parse(Regex.Match(parts[0], @"[0-9]+").Value),
-                    Int32.Parse(Regex.Match(parts[1], @"[0-9]+").Value));
+                    Int32.Parse(Regex.Match(parts[1], @"[0-9]+").Value));*/
+                node = new Operand(Regex.Match(expression, @"[a-zA-Z]+").Value,
+                    new Dimension(Int32.Parse(Regex.Match(parts[0], @"[0-9]+").Value),
+                    Int32.Parse(Regex.Match(parts[1], @"[0-9]+").Value)));
             }
             // Vector
             else if (expression.Contains('['))
             {
-                node = new Vector(Regex.Match(expression, @"[a-zA-Z]+").Value,
-                    Int32.Parse(Regex.Match(expression, @"[0-9]+").Value));
+                /*node = new Vector(Regex.Match(expression, @"[a-zA-Z]+").Value,
+                    Int32.Parse(Regex.Match(expression, @"[0-9]+").Value));*/
+                node = new Operand(Regex.Match(expression, @"[a-zA-Z]+").Value,
+                    new Dimension(Int32.Parse(Regex.Match(expression, @"[0-9]+").Value),
+                    1));
             }
             // Scalar
             else
             {
-                node = new Scalar(Regex.Match(expression, @"[a-zA-Z0-9]+").Value);
+                //node = new Scalar(Regex.Match(expression, @"[a-zA-Z0-9]+").Value);
+                node = new Operand(Regex.Match(expression, @"[a-zA-Z0-9]+").Value,
+                    new Dimension(1, 1));
             }
 
             if (node == null)
             {
                 throw new ApplicationException("Parse error!");
             }
+
+            // kivonás összeadássá alakítása itt 
+            if (isParentSubtraction)
+            {
+                TreeNode helperNode = new Multiplication();
+                helperNode.LeftChild = new Operand("-1", new Dimension(1, 1));
+                helperNode.RightChild = node;
+                node = helperNode;
+            }
+
+
+            // osztás szorzássá alakítása itt
+            if (isParentDivision)
+            {
+                // elvileg itt már csak skalár lehet a jobb oldalon
+                ((Operand)node).Name = "1/" + ((Operand)node).Name;
+            }
+
             return node;
         }
 
@@ -99,13 +130,57 @@ namespace ExpressionSimplifier
                 {
                     if (insideParentheses == 0 && expression[i] == ops[j])
                     {
-                        node = Operator.CreateOperator(ops[j]);
-                        node.LeftChild = Parse(expression.Substring(0, i));
-                        node.RightChild = Parse(expression.Substring(i + 1,
-                            expression.Length - (i + 1)));
+                        node = CreateOperatorNode(ops[j]);
+                        node.LeftChild = Parse(expression.Substring(0, i), false, false);
+                        if (ops[j] == '-')
+                        {
+                            node.RightChild = Parse(expression.Substring(i + 1,
+                                                expression.Length - (i + 1)), true, false); 
+                        }
+                        else if (ops[j] == '/')
+                        {
+                            node.RightChild = Parse(expression.Substring(i + 1,
+                                                expression.Length - (i + 1)), false, true); 
+                        }
+                        else
+                        {
+                            node.RightChild = Parse(expression.Substring(i + 1,
+                                                expression.Length - (i + 1)), false, false);
+                        }
                         return node;
                     }
                 }
+            }
+            return node;
+        }
+
+        private static TreeNode CreateOperatorNode(char p)
+        {
+            TreeNode node = null;
+            switch (p)
+            {
+                case '+':
+                    {
+                        node = new Addition();
+                        break;
+                    }
+                case '-':
+                    {
+                        node = new Addition();
+                        break;
+                    }
+                case '*':
+                    {
+                        node = new Multiplication();
+                        break;
+                    }
+                case '/':
+                    {
+                        node = new Multiplication();
+                        break;
+                    }
+                default:
+                    throw new ApplicationException("Unknown operator: " + p);
             }
             return node;
         }

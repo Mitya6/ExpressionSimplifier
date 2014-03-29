@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Addition : Operator
+    internal class Addition : TreeNode
     {
-        public override String ToString()
+        public Addition()
         {
-            return "+";
+            this.Name = "+";
         }
 
-        public override Dimension GetDimensions()
+        public override Dimension GetDimension()
         {
-            Dimension leftDim = this.LeftChild.GetDimensions();
-            Dimension rightDim = this.RightChild.GetDimensions();
+            Dimension leftDim = this.LeftChild.GetDimension();
+            Dimension rightDim = this.RightChild.GetDimension();
 
             if (leftDim.N != rightDim.N || leftDim.M != rightDim.M)
             {
-                throw new ApplicationException("Error: Invalid " + this.ToString() + " dimensions!");
+                throw new ApplicationException("Error: Invalid " + this.Name + " dimensions!");
             }
             return leftDim;
         }

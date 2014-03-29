@@ -6,22 +6,21 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Multiplication : Operator
+    internal class Multiplication : TreeNode
     {
-        public override String ToString()
+        public Multiplication()
         {
-            return "*";
+            this.Name = "*";
         }
 
-        public override Dimension GetDimensions()
+        public override Dimension GetDimension()
         {
-            Dimension leftDim = this.LeftChild.GetDimensions();
-            Dimension rightDim = this.RightChild.GetDimensions();
+            Dimension leftDim = this.LeftChild.GetDimension();
+            Dimension rightDim = this.RightChild.GetDimension();
             Dimension dim;
 
             // At least one operand is of type Scalar
-            if (this.LeftChild.GetType() == typeof(Scalar) ||
-                this.RightChild.GetType() == typeof(Scalar))
+            if (leftDim.Is1x1 || rightDim.Is1x1)
             {
                 dim = new Dimension(Math.Max(leftDim.N, rightDim.N),
                     Math.Max(leftDim.M, rightDim.M));
@@ -32,7 +31,7 @@ namespace ExpressionSimplifier
             {
                 if (leftDim.M != rightDim.N)
                 {
-                    throw new ApplicationException("Error: Invalid " + this.ToString() + " dimensions!");
+                    throw new ApplicationException("Error: Invalid " + this.Name + " dimensions!");
                 }
                 else
                 {

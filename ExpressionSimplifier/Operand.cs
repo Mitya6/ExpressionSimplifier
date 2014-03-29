@@ -6,20 +6,24 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal abstract class Operand : TreeNode
+    internal class Operand : TreeNode
     {
-        protected Dimension dimensions;
+        private Dimension dimension;
 
-        public String Name { get; set; }
+        public Operand(String name, Dimension dimension)
+        {
+            this.Name = name;
+            this.dimension = dimension;
+        }
 
         public override String ToString()
         {
             return this.Name;
         }
 
-        public override Dimension GetDimensions()
+        public override Dimension GetDimension()
         {
-            return this.dimensions;
+            return this.dimension;
         }
     }
 }

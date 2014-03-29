@@ -11,6 +11,8 @@ namespace ExpressionSimplifier
         public int N;
         public int M;
 
+        public bool Is1x1 { get { return this.N == 1 && this.M == 1; } }
+
         public Dimension(int n, int m)
         {
             this.N = n;
