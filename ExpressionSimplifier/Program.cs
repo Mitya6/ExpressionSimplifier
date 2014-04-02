@@ -16,13 +16,19 @@ namespace ExpressionSimplifier
             List<TreeNode> trees = new List<TreeNode>();
             foreach (String line in lines)
             {
-                trees.Add(ExpressionParser.Parse(line));
+                trees.Add(ExpressionParser.BuildTree(line));
             }
 
 
             foreach (var item in trees)
             {
                 Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
+                if (item == null)
+                {
+                    Console.WriteLine("Invalid parentheses\n");
+                    continue;
+                }
 
                 Dimension dim;
                 try

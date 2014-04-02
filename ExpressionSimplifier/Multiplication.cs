@@ -19,14 +19,14 @@ namespace ExpressionSimplifier
             Dimension rightDim = this.RightChild.GetDimension();
             Dimension dim;
 
-            // At least one operand is of type Scalar
+            // At least one operand is scalar
             if (leftDim.Is1x1 || rightDim.Is1x1)
             {
                 dim = new Dimension(Math.Max(leftDim.N, rightDim.N),
                     Math.Max(leftDim.M, rightDim.M));
             }
 
-            // No Scalar operand
+            // No scalar operand
             else
             {
                 if (leftDim.M != rightDim.N)

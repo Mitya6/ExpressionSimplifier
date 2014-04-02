@@ -18,7 +18,10 @@ namespace ExpressionSimplifier
                 String line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    lines.Add(line);
+                    if (line[0] != '#')
+                    {
+                        lines.Add(line); 
+                    }
                 }
             }
 

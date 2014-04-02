@@ -13,15 +13,13 @@ namespace ExpressionSimplifier
         public String Name { get; set; }
 
         /// <summary>
-        /// Calculates the resulting dimensions of the node recursively.
+        /// Calculates the resulting dimension of the node recursively.
         /// </summary>
-        /// <returns></returns>
         public abstract Dimension GetDimension();
 
         /// <summary>
         /// Returns the depth of the tree starting from this node.
         /// </summary>
-        /// <returns></returns>
         public int Depth()
         {
             int depthLeft = 0;
@@ -40,29 +38,9 @@ namespace ExpressionSimplifier
         }
 
         /// <summary>
-        /// Collects the nodes on level i in the original tree into a list.
+        /// Returns a 90 degree rotated string representation of the current
+        /// expression tree.
         /// </summary>
-        /// <param name="i"></param>
-        /// <param name="sameLevelNodes"></param>
-        public void GetLevelNodes(int i, List<TreeNode> sameLevelNodes)
-        {
-            if (i == 1)
-            {
-                sameLevelNodes.Add(this);
-            }
-            else
-            {
-                if (this.LeftChild != null)
-                {
-                    this.LeftChild.GetLevelNodes(i - 1, sameLevelNodes);
-                }
-                if (this.RightChild != null)
-                {
-                    this.RightChild.GetLevelNodes(i - 1, sameLevelNodes);
-                }
-            }
-        }
-
         public override String ToString()
         {
             return ToString(0);

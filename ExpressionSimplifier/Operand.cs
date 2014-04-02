@@ -16,11 +16,6 @@ namespace ExpressionSimplifier
             this.dimension = dimension;
         }
 
-        public override String ToString()
-        {
-            return this.Name;
-        }
-
         public override Dimension GetDimension()
         {
             return this.dimension;
