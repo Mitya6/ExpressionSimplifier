@@ -6,17 +6,22 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal struct Dimension
+    public struct Dimension
     {
-        public int N;
         public int M;
+        public int N;
 
-        public bool Is1x1 { get { return this.N == 1 && this.M == 1; } }
+        public bool Is1x1 { get { return this.M == 1 && this.N == 1; } }
 
-        public Dimension(int n, int m)
+        public Dimension(int m, int n)
         {
-            this.N = n;
             this.M = m;
+            this.N = n;
+        }
+
+        public override String ToString()
+        {
+            return String.Format("[{0},{1}]", this.M, this.N);
         }
     }
 }

@@ -11,17 +11,22 @@ namespace ExpressionSimplifier
 
         public const double Epsilon = 0.00001;
 
-        public Scalar(String name, Dimension dimension) : base(name, dimension)
+        public Scalar(String name, Expression expr = null)
         {
+            if (expr != null)
+            {
+                this.Expr = expr;
+            }
+
             double number;
             if (this.TryConvert(name, out number))
             {
                 this.Value = number;
-                this.Name = number.ToString();
+                this.DisplayName = number.ToString();
             }
             else
             {
-                this.Value = Double.NaN; 
+                this.Value = Double.NaN;
             }
         }
 

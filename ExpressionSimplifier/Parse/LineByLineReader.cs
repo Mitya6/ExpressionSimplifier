@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpressionSimplifier
+namespace ExpressionSimplifier.Parse
 {
-    internal class LineByLineReader
+    public class LineByLineReader
     {
         public static List<String> ReadInput(String path)
         {

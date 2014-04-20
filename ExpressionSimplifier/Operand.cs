@@ -10,15 +10,21 @@ namespace ExpressionSimplifier
     {
         private Dimension dimension;
 
-        public Operand(String name, Dimension dimension)
+        protected Operand() { }
+
+        public Operand(String name, Dimension dimension, Expression expr = null) : base(name + dimension.ToString(), expr)
         {
-            this.Name = name;
             this.dimension = dimension;
         }
 
         public override Dimension GetDimension()
         {
             return this.dimension;
+        }
+
+        public override int Cost()
+        {
+            return 0;
         }
     }
 }

@@ -3,14 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressionSimplifier.TreeIteration;
 
 namespace ExpressionSimplifier
 {
-    internal abstract class TreeNode
+    public abstract class TreeNode
     {
-        public TreeNode LeftChild { get; set; }
-        public TreeNode RightChild { get; set; }
-        public String Name { get; set; }
+        protected List<TreeNode> children;
+
+        public TreeNode Parent { get; set; }
+        public Expression Expr { get; set; }
+        public String DisplayName { get; set; }
+        public bool IsLeaf { get { return this.children.Count == 0; } }
+        public bool IsRoot { get { return this.Parent == null; } }
+
+        public TreeNode()
+        {
+            this.children = new List<TreeNode>();
+        }
+
+        public TreeNode(String name, Expression expr = null)
+        {
+            if (expr != null)
+            {
+                this.Expr = expr;
+            }
+
+            this.DisplayName = name;
+            this.children = new List<TreeNode>();
+        }
 
         /// <summary>
         /// Calculates the resulting dimension of the node recursively.
@@ -18,54 +39,109 @@ namespace ExpressionSimplifier
         public abstract Dimension GetDimension();
 
         /// <summary>
+        /// Calculates the computation cost of the node recursively.
+        /// </summary>
+        public abstract int Cost();
+
+
+        #region Child manipulation
+
+        public TreeNode GetChild(int idx)
+        {
+            return this.children[idx];
+        }
+
+        public int ChildrenCount()
+        {
+            return this.children.Count;
+        }
+
+        public int IndexOf(TreeNode node)
+        {
+            return this.children.IndexOf(node);
+        }
+
+        public void AddChild(TreeNode child)
+        {
+            this.children.Add(child);
+            child.Parent = this;
+        }
+
+        public void InsertChild(TreeNode child, int idx)
+        {
+            this.children.Insert(idx, child);
+            child.Parent = this;
+        }
+
+        public void RemoveChild(int idx)
+        {
+            this.children[idx].Parent = null;
+            this.children.RemoveAt(idx);
+        }
+
+        public void RemoveChild(TreeNode child)
+        {
+            if (this.children.Contains(child))
+            {
+                child.Parent = null;
+                this.children.Remove(child);
+            }
+        }
+
+        public void ReplaceChild(int idx, TreeNode newNode)
+        {
+            InsertChild(newNode, idx);
+            RemoveChild(idx + 1);
+        }
+
+        public void ReplaceChild(TreeNode oldNode, TreeNode newNode)
+        {
+            if (this.children.Contains(oldNode))
+            {
+                InsertChild(newNode, this.children.IndexOf(oldNode));
+                RemoveChild(oldNode);
+            }
+        }
+
+        public void ClearChildren()
+        {
+            this.children.Clear();
+        }
+
+        #endregion
+
+        /// <summary>
         /// Returns the depth of the tree starting from this node.
         /// </summary>
         public int Depth()
         {
-            int depthLeft = 0;
-            int depthRight = 0;
-
-            if (this.LeftChild != null)
+            int depth = 0;
+            foreach (TreeNode child in this.children)
             {
-                depthLeft = this.LeftChild.Depth();
+                if (child != null)
+                {
+                    depth = Math.Max(depth, child.Depth());
+                }
             }
-            if (this.RightChild != null)
-            {
-                depthRight = this.RightChild.Depth();
-            }
-
-            return Math.Max(depthLeft, depthRight) + 1;
+            return depth + 1;
         }
 
-        /// <summary>
-        /// Returns a 90 degree rotated string representation of the current
-        /// expression tree.
-        /// </summary>
+        public bool IsSameOperationAsParent()
+        {
+            return (this.GetType() == typeof(Addition) &&
+                this.Parent.GetType() == typeof(Addition)) ||
+                (this.GetType() == typeof(Multiplication) &&
+                this.Parent.GetType() == typeof(Multiplication));
+        }
+
+        public BFSIterator GetBFSIterator()
+        {
+            return new BFSIterator(this);
+        }
+
         public override String ToString()
         {
-            return ToString(0);
-        }
-
-        private String ToString(int depth)
-        {
-            String s = "";
-            if (this.RightChild != null)
-            {
-                s += this.RightChild.ToString(depth + 1);
-            }
-
-            for (int i = 0; i < depth; i++)
-            {
-                s += "\t";
-            }
-            s += this.Name + "\n";
-
-            if (this.LeftChild != null)
-            {
-                s += this.LeftChild.ToString(depth + 1);
-            }
-
-            return s;
+            return this.DisplayName;
         }
     }
 }

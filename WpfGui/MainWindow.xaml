@@ -1,0 +1,19 @@
+﻿<Window x:Class="WpfGui.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="MainWindow" Height="600" Width="1000" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="lbExpressions" SelectionChanged="lbExpressions_SelectionChanged" />
+        <DockPanel Grid.Column="1" Margin="5, 0, 0, 0">
+            <DockPanel DockPanel.Dock="Top" >
+                <Label Content="Transformation: " />
+                <ComboBox x:Name="cbTransformations" />
+            </DockPanel>
+            <TextBlock x:Name="tbError" DockPanel.Dock="Bottom" Foreground="Red" FontWeight="Bold" FontSize="15"/>
+            <TreeView x:Name="tvTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0"/>
+        </DockPanel>        
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" ShowsPreview="True" Width="5" />
+
+    </Grid>
+</Window>

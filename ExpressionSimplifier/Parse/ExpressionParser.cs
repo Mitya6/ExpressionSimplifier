@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ExpressionSimplifier
+namespace ExpressionSimplifier.Parse
 {
     /// <summary>
     /// Helper class. Contains static methods to convert an expression
     /// string to an expression tree.
     /// </summary>
-    internal static class ExpressionParser
+    public static class ExpressionParser
     {
         /// <summary>
         /// Creates the tree representation of the given expression string
@@ -59,8 +59,7 @@ namespace ExpressionSimplifier
             // Scalar
             else
             {
-                node = new Scalar(Regex.Match(expression, @"[a-zA-Z0-9./]+").Value,
-                    new Dimension(1, 1));
+                node = new Scalar(Regex.Match(expression, @"[a-zA-Z0-9./]+").Value);
             }
 
             if (node == null)
@@ -125,22 +124,22 @@ namespace ExpressionSimplifier
                             String left = expression.Substring(0, i);
                             String right = expression.Substring(i + 1, expression.Length - (i + 1));
 
-                            node.LeftChild = Parse(left);
+                            node.AddChild(Parse(left));
 
                             if (ops[j] == '-')
                             {
-                                node.RightChild = new Multiplication();
-                                node.RightChild.LeftChild = new Operand("-1", new Dimension(1, 1));
-                                node.RightChild.RightChild = Parse(right);
+                                node.AddChild(new Multiplication());
+                                node.GetChild(1).AddChild(new Scalar("-1"));
+                                node.GetChild(1).AddChild(Parse(right));
                             }
                             else if (ops[j] == '/')
                             {
-                                node.RightChild = new Scalar(Regex.Match("1/" + right,
-                                    @"[a-zA-Z0-9./]+").Value, new Dimension(1, 1));
+                                node.AddChild(new Scalar(Regex.Match("1/" + right,
+                                    @"[a-zA-Z0-9./]+").Value));
                             }
                             else
                             {
-                                node.RightChild = Parse(right);
+                                node.AddChild(Parse(right));
                             }
 
                             return node;

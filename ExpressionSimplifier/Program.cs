@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressionSimplifier.Parse;
+using ExpressionSimplifier.TreeIteration;
 
 namespace ExpressionSimplifier
 {
@@ -34,7 +36,8 @@ namespace ExpressionSimplifier
                 try
                 {
                     dim = item.GetDimension();
-                    Console.WriteLine("dim: [" + dim.N + "," + dim.M + "]\n");
+                    Console.WriteLine("dim: [" + dim.M + "," + dim.N + "]\n");
+                    Console.WriteLine("cost: " + item.Cost() + "\n");
                 }
                 catch (ApplicationException appEx)
                 {
