@@ -8,17 +8,17 @@ namespace ExpressionSimplifier.TreeIteration
 {
     public class BFSIterator : TreeIterator
     {
-        private Queue<TreeNode> queue;
+        private Queue<Node> queue;
 
-        public BFSIterator(TreeNode root)
+        public BFSIterator(Node root)
         {
-            this.queue = new Queue<TreeNode>();
+            this.queue = new Queue<Node>();
             this.queue.Enqueue(root);
         }
 
-        public TreeNode Next()
+        public Node Next()
         {
-            TreeNode currentNode = this.queue.Dequeue();
+            Node currentNode = this.queue.Dequeue();
             if (currentNode != null)
             {
                 for (int i = 0; i < currentNode.ChildrenCount(); i++)

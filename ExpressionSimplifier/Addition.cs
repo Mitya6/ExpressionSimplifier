@@ -6,34 +6,39 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Addition : TreeNode
+    internal class Addition : ExpressionNode
     {
         public Addition(Expression expr = null) : base("+", expr) { }
 
         public override Dimension GetDimension()
         {
-            foreach (TreeNode child in this.children)
+            ExpressionNode child0 = (ExpressionNode)(this.children[0]);
+
+            foreach (ExpressionNode child in this.children)
             {
-                if (child.GetDimension().M != this.children[0].GetDimension().M ||
-                    child.GetDimension().N != this.children[0].GetDimension().N)
+                if (child.GetDimension().M != child0.GetDimension().M ||
+                    child.GetDimension().N != child0.GetDimension().N)
                 {
                     throw new ApplicationException(
                     "Error: Invalid " + this.DisplayName + " dimensions!");
                 }
             }
 
-            return this.children[0].GetDimension();
+            return child0.GetDimension();
         }
 
         public override int Cost()
         {
-            Dimension dim = this.children[0].GetDimension();
+            Dimension dim = ((ExpressionNode)(this.children[0])).GetDimension();
 
-            int cost = this.children[0].Cost();
-            for (int i = 1; i < this.children.Count; i++)
+            int cost = 0;
+            for (int i = 0; i < this.children.Count; i++)
             {
-                cost += this.children[i].Cost();
-                cost += dim.M * dim.N;
+                cost += ((ExpressionNode)(this.children[i])).Cost();
+                if (i != 0)
+                {
+                    cost += dim.M * dim.N; 
+                }
             }
 
             return cost;

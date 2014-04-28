@@ -8,9 +8,13 @@
         <DockPanel Grid.Column="1" Margin="5, 0, 0, 0">
             <DockPanel DockPanel.Dock="Top" >
                 <Label Content="Transformation: " />
+                <Button x:Name="btnApplyFirst" Content="ApplyFirst" DockPanel.Dock="Right" Click="btnApplyFirst_Click" />
                 <ComboBox x:Name="cbTransformations" />
             </DockPanel>
-            <TextBlock x:Name="tbError" DockPanel.Dock="Bottom" Foreground="Red" FontWeight="Bold" FontSize="15"/>
+            <TextBlock x:Name="tbError" DockPanel.Dock="Bottom" Foreground="Red" FontWeight="Bold" FontSize="15" />
+            <TextBlock x:Name="tbDimension" DockPanel.Dock="Bottom" />
+            <TextBlock x:Name="tbCost" DockPanel.Dock="Bottom"/>
+            
             <TreeView x:Name="tvTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0"/>
         </DockPanel>        
         <GridSplitter Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" ShowsPreview="True" Width="5" />

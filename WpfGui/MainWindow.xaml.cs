@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ExpressionSimplifier;
 using ExpressionSimplifier.Parse;
+using ExpressionSimplifier.Pattern;
 
 namespace WpfGui
 {
@@ -75,6 +76,15 @@ namespace WpfGui
                 if (expr.Root != null)
                 {
                     this.tvTree.Items.Add(PopulateTreeView(expr.Root));
+                    try
+                    {
+                        this.tbDimension.Text = "Dimension: " + expr.Root.GetDimension().ToString();
+                        this.tbCost.Text = "Cost: " + expr.Root.Cost().ToString();
+                    }
+                    catch (ApplicationException appEx)
+                    {
+                        tbError.Text = appEx.Message;
+                    }
                 }
                 else
                 {
@@ -92,7 +102,7 @@ namespace WpfGui
             {
                 methodNames.Add(mi.Name);
             }
-            methodNames = methodNames.SkipWhile(item => item != "DeleteZeroOrEmptyAddition").ToList();
+            methodNames = methodNames.SkipWhile(item => item != "DeleteZeroAddition").ToList();
 
             cbTransformations.ItemsSource = methodNames;
         }
@@ -101,32 +111,34 @@ namespace WpfGui
         {
             this.tvTree.Items.Clear();
             this.tbError.Text = "";
+            this.tbDimension.Text = "";
+            this.tbCost.Text = "";
         }
 
-        private TreeViewItem PopulateTreeView(TreeNode treeNode)
+        private TreeViewItem PopulateTreeView(ExpressionNode expNode)
         {
             TreeViewItem tvItem = new TreeViewItem();
 
-            Button button = new Button() { Content = treeNode };
+            Button button = new Button() { Content = expNode };
             button.Click += (object sender, RoutedEventArgs e) =>
                 {
-                    TreeNode clickedNode = (TreeNode)(((Button)sender).Content);
+                    ExpressionNode clickedNode = (ExpressionNode)(((Button)sender).Content);
                     PerformTransformation(clickedNode);
 
                     UpdateTreeView();
                 };
             tvItem.Header = button;
-            
-            for (int i = 0; i < treeNode.ChildrenCount(); i++)
+
+            for (int i = 0; i < expNode.ChildrenCount(); i++)
             {
-                tvItem.Items.Add(PopulateTreeView(treeNode.GetChild(i)));
+                tvItem.Items.Add(PopulateTreeView((ExpressionNode)(expNode.GetChild(i))));
             }
 
             tvItem.ExpandSubtree();
             return tvItem;
         }
 
-        private void PerformTransformation(TreeNode clickedNode)
+        private void PerformTransformation(ExpressionNode clickedNode)
         {
             if (cbTransformations.SelectedItem == null) return;
 
@@ -134,5 +146,29 @@ namespace WpfGui
                 cbTransformations.SelectedItem.ToString());
             mi.Invoke(clickedNode.Expr, new Object[] { clickedNode });
         }
+
+        private void btnApplyFirst_Click(object sender, RoutedEventArgs e)
+        {
+            if (cbTransformations.SelectedItem == null) return;
+
+            ExpressionSimplifier.Expression expr = lbExpressions.SelectedItem
+                            as ExpressionSimplifier.Expression;
+            String transformation = cbTransformations.SelectedItem.ToString();
+
+            if (expr != null)
+            {
+                MethodInfo[] methodInfos = typeof(Pattern).GetMethods(
+                BindingFlags.Public | BindingFlags.Static);
+                MethodInfo methodInfo = methodInfos.FirstOrDefault(mi => mi.Name.Contains(transformation));
+
+                if (methodInfo != null)
+                {
+                    methodInfo.Invoke(null, new Object[] { expr });
+                    UpdateTreeView();
+                }
+            }
+        }
+
+
     }
 }

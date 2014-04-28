@@ -8,7 +8,7 @@ namespace ExpressionSimplifier.TreeIteration
 {
     internal interface TreeIterator
     {
-        TreeNode Next();
+        Node Next();
 
         bool HasNext();
     }

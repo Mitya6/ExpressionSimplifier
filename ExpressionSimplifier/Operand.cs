@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Operand : TreeNode
+    internal class Operand : ExpressionNode
     {
-        private Dimension dimension;
+        protected Dimension dimension;
 
         protected Operand() { }
 

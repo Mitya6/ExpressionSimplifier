@@ -15,7 +15,7 @@ namespace ExpressionSimplifier
             String path = "Input.txt";
             List<String> lines = LineByLineReader.ReadInput(path);
 
-            List<TreeNode> trees = new List<TreeNode>();
+            List<ExpressionNode> trees = new List<ExpressionNode>();
             foreach (String line in lines)
             {
                 trees.Add(ExpressionParser.BuildTree(line));

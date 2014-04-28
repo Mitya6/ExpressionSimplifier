@@ -7,12 +7,14 @@ namespace ExpressionSimplifier
 {
     internal class Scalar : Operand
     {
-        public double Value { get; set; }
+        public double? Value { get; set; }
 
         public const double Epsilon = 0.00001;
 
         public Scalar(String name, Expression expr = null)
         {
+            this.dimension = new Dimension(1, 1);
+
             if (expr != null)
             {
                 this.Expr = expr;
@@ -26,7 +28,8 @@ namespace ExpressionSimplifier
             }
             else
             {
-                this.Value = Double.NaN;
+                this.Value = null;
+                this.DisplayName = name;
             }
         }
 

@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Multiplication : TreeNode
+    internal class Multiplication : ExpressionNode
     {
         public Multiplication(Expression expr = null) : base("*", expr) { }
 
         public override Dimension GetDimension()
         {
-            Dimension resultDim = this.children[0].GetDimension();
+            Dimension resultDim = ((ExpressionNode)(this.children[0])).GetDimension();
             for (int i = 1; i < this.children.Count; i++)
             {
                 resultDim = GetDimension(
-                    resultDim, this.children[i].GetDimension());
+                    resultDim, ((ExpressionNode)(this.children[i])).GetDimension());
             }
             return resultDim;
         }
@@ -51,12 +51,12 @@ namespace ExpressionSimplifier
 
         public override int Cost()
         {
-            int cost = this.children[0].Cost();
+            int cost = ((ExpressionNode)(this.children[0])).Cost();
             for (int i = 1; i < this.children.Count; i++)
             {
-                cost += Cost(this.children[i - 1].GetDimension(),
-                    this.children[i].GetDimension());
-                cost += this.children[i].Cost();
+                cost += Cost(((ExpressionNode)(this.children[i - 1])).GetDimension(),
+                    ((ExpressionNode)(this.children[i])).GetDimension());
+                cost += ((ExpressionNode)(this.children[i])).Cost();
             }
             return cost;
         }

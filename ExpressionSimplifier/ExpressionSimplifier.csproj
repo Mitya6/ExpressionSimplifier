@@ -62,17 +62,20 @@
     <Compile Include="Addition.cs" />
     <Compile Include="Dimension.cs" />
     <Compile Include="Expression.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Parse\ExpressionParser.cs" />
     <Compile Include="Parse\LineByLineReader.cs" />
     <Compile Include="Multiplication.cs" />
     <Compile Include="Operand.cs" />
+    <Compile Include="Pattern\Pattern.cs" />
+    <Compile Include="Pattern\PatternNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scalar.cs" />
     <Compile Include="TreeIteration\BFSIterator.cs" />
     <Compile Include="TreeIteration\DFSIterator.cs" />
     <Compile Include="TreeIteration\TreeIterator.cs" />
-    <Compile Include="TreeNode.cs" />
+    <Compile Include="ExpressionNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

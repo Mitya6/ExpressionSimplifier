@@ -17,7 +17,7 @@ namespace ExpressionSimplifier.Parse
         /// Creates the tree representation of the given expression string
         /// and returns its root tree node.
         /// </summary>
-        public static TreeNode BuildTree(String expression)
+        public static ExpressionNode BuildTree(String expression)
         {
             if (CheckParentheses(expression))
             {
@@ -31,11 +31,11 @@ namespace ExpressionSimplifier.Parse
         /// subexpressions for further parsing when it finds an operator,
         /// otherwise it creates operands as leaves in the expression tree.
         /// </summary>
-        private static TreeNode Parse(String expression)
+        private static ExpressionNode Parse(String expression)
         {
             RemoveOuterParentheses(ref expression);
 
-            TreeNode node = Split(expression);
+            ExpressionNode node = Split(expression);
             if (node != null)
             {
                 return node;
@@ -72,13 +72,13 @@ namespace ExpressionSimplifier.Parse
 
         /// <summary>
         /// Splits the specified expression into two subexpressions at the last
-        /// valid occurence of an operator with the least precedence, and returns a
-        /// TreeNode representing this operator. If a split can be done, the
+        /// valid occurence of an operator with the least precedence, and returns an
+        /// ExpressionNode representing this operator. If a split can be done, the
         /// function recursively parses the left and right subexpressions.
         /// </summary>
-        private static TreeNode Split(String expression)
+        private static ExpressionNode Split(String expression)
         {
-            TreeNode node = null;
+            ExpressionNode node = null;
             int insideParentheses = 0;
             List<char[]> operators = new List<char[]>();
             operators.Add(new char[] { '+', '-' });
@@ -124,13 +124,16 @@ namespace ExpressionSimplifier.Parse
                             String left = expression.Substring(0, i);
                             String right = expression.Substring(i + 1, expression.Length - (i + 1));
 
-                            node.AddChild(Parse(left));
+                            if (left != "")
+                            {
+                                node.AddChild(Parse(left)); 
+                            }
 
                             if (ops[j] == '-')
                             {
                                 node.AddChild(new Multiplication());
-                                node.GetChild(1).AddChild(new Scalar("-1"));
-                                node.GetChild(1).AddChild(Parse(right));
+                                node.GetChild(node.ChildrenCount() - 1).AddChild(new Scalar("-1"));
+                                node.GetChild(node.ChildrenCount() - 1).AddChild(Parse(right));
                             }
                             else if (ops[j] == '/')
                             {
