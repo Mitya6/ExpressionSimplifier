@@ -31,6 +31,8 @@ namespace WpfGui
         {
             InitializeComponent();
             this.expressions = new List<ExpressionSimplifier.Expression>();
+
+            ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -88,7 +90,7 @@ namespace WpfGui
                 }
                 else
                 {
-                    this.tbError.Text = "Error!";
+                    this.tbError.Text = "Invalid expression!";
                 }
             }
         }
@@ -119,10 +121,10 @@ namespace WpfGui
         {
             TreeViewItem tvItem = new TreeViewItem();
 
-            Button button = new Button() { Content = expNode };
+            Button button = new Button() { Content = expNode.DisplayName, Tag = expNode, ToolTip = expNode.ToString() };
             button.Click += (object sender, RoutedEventArgs e) =>
                 {
-                    ExpressionNode clickedNode = (ExpressionNode)(((Button)sender).Content);
+                    ExpressionNode clickedNode = (ExpressionNode)(((Button)sender).Tag);
                     PerformTransformation(clickedNode);
 
                     UpdateTreeView();

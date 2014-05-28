@@ -43,7 +43,35 @@ namespace ExpressionSimplifier
 
         public override String ToString()
         {
-            return this.DisplayName;
+            return ToString(false);
+        }
+
+        private String ToString(bool hasMultiplicationAbove)
+        {
+            String s;
+            if (this.IsLeaf)
+            {
+                s = this.DisplayName;
+                if (this.DisplayName.StartsWith("-"))
+                {
+                    s = "(" + s + ")";
+                }
+                return s;
+            }
+
+            s = ((ExpressionNode)this.children[0]).ToString(this.GetType() == typeof(Multiplication));
+            for (int i = 1; i < this.children.Count; i++)
+            {
+                s += this.DisplayName;
+                s += ((ExpressionNode)this.children[i]).ToString(this.GetType() == typeof(Multiplication));
+            }
+
+            if (hasMultiplicationAbove && this.GetType() == typeof(Addition))
+            {
+                s = "(" + s + ")";
+            }
+
+            return s;
         }
     }
 }
