@@ -6,29 +6,29 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier.Pattern
 {
-    internal class PatternNode : Node
+    class PatternNode : Node
     {
-        private Type[] matchingTypes;
+        private NodeType[] matchingTypes;
         private String displayName;
         private double? value;
 
-        public PatternNode(Type[] matchingTypes, String displayName = null, double? value = null)
+        public PatternNode(NodeType[] matchingTypes, String displayName = null, double? value = null)
         {
             this.matchingTypes = matchingTypes;
             this.displayName = displayName;
             this.value = value;
         }
 
-        public PatternNode(Type matchingType, String displayName = null, double? value = null)
+        public PatternNode(NodeType matchingType, String displayName = null, double? value = null)
         {
-            this.matchingTypes = new Type[] { matchingType };
+            this.matchingTypes = new NodeType[] { matchingType };
             this.displayName = displayName;
             this.value = value;
         }
 
         public bool Compare(ExpressionNode node)
         {
-            bool result = this.matchingTypes.Contains(node.GetType());
+            bool result = this.matchingTypes.Contains(node.Type);
             if (this.displayName != null)
             {
                 result = result && this.displayName == node.DisplayName;

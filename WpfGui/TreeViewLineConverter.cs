@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace WpfGui
 {
-    internal class TreeViewLineConverter : IValueConverter
+    class TreeViewLineConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

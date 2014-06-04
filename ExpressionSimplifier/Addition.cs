@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Addition : ExpressionNode
+    class Addition : ExpressionNode
     {
-        public Addition(Expression expr = null) : base("+", expr) { }
+        public Addition(Expression expr = null) : base("+", expr) 
+        {
+            this.type = NodeType.Addition;
+        }
 
         public override Dimension GetDimension()
         {

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ExpressionSimplifier
 {
-    internal class Scalar : Operand
+    class Scalar : Operand
     {
         public double? Value { get; set; }
 
@@ -13,6 +13,7 @@ namespace ExpressionSimplifier
 
         public Scalar(String name, Expression expr = null)
         {
+            this.type = NodeType.Scalar;
             this.dimension = new Dimension(1, 1);
 
             if (expr != null)

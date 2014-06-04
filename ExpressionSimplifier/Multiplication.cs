@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier
 {
-    internal class Multiplication : ExpressionNode
+    class Multiplication : ExpressionNode
     {
-        public Multiplication(Expression expr = null) : base("*", expr) { }
+        public Multiplication(Expression expr = null) : base("*", expr) 
+        {
+            this.type = NodeType.Multiplication;
+        }
 
         public override Dimension GetDimension()
         {

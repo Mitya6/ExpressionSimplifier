@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExpressionSimplifier.TreeIteration
+namespace ExpressionSimplifier
 {
-    class DFSIterator
+    public enum NodeType
     {
+        Addition, Multiplication, Operand, Scalar, PatternNode
     }
 }

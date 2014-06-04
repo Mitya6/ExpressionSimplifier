@@ -35,10 +35,10 @@ namespace ExpressionSimplifier
 
         public bool IsSameOperationAsParent()
         {
-            return (this.GetType() == typeof(Addition) &&
-                this.Parent.GetType() == typeof(Addition)) ||
-                (this.GetType() == typeof(Multiplication) &&
-                this.Parent.GetType() == typeof(Multiplication));
+            return (this.Type == NodeType.Addition &&
+                this.Parent.Type == NodeType.Addition) ||
+                (this.Type == NodeType.Multiplication &&
+                this.Parent.Type == NodeType.Multiplication);
         }
 
         public override String ToString()
@@ -59,14 +59,14 @@ namespace ExpressionSimplifier
                 return s;
             }
 
-            s = ((ExpressionNode)this.children[0]).ToString(this.GetType() == typeof(Multiplication));
+            s = ((ExpressionNode)this.children[0]).ToString(this.Type == NodeType.Multiplication);
             for (int i = 1; i < this.children.Count; i++)
             {
                 s += this.DisplayName;
-                s += ((ExpressionNode)this.children[i]).ToString(this.GetType() == typeof(Multiplication));
+                s += ((ExpressionNode)this.children[i]).ToString(this.Type == NodeType.Multiplication);
             }
 
-            if (hasMultiplicationAbove && this.GetType() == typeof(Addition))
+            if (hasMultiplicationAbove && this.Type == NodeType.Addition)
             {
                 s = "(" + s + ")";
             }

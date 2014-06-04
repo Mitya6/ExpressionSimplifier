@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExpressionSimplifier.TreeIteration
 {
-    internal interface TreeIterator
+    interface TreeIterator
     {
         Node Next();
 

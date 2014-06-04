@@ -10,7 +10,9 @@ namespace ExpressionSimplifier
     public abstract class Node
     {
         protected List<Node> children = new List<Node>();
+        protected NodeType type;
 
+        public NodeType Type { get { return this.type; } }
         public Node Parent { get; set; }
         public bool IsLeaf { get { return this.children.Count == 0; } }
         public bool IsRoot { get { return this.Parent == null; } }

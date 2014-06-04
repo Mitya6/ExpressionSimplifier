@@ -41,8 +41,8 @@ namespace ExpressionSimplifier.Pattern
 
         private static Pattern CreateDeleteZeroAdditionPattern()
         {
-            PatternNode node = new PatternNode(typeof(Addition));
-            node.AddChild(new PatternNode(typeof(Scalar), null, 0));
+            PatternNode node = new PatternNode(NodeType.Addition);
+            node.AddChild(new PatternNode(NodeType.Scalar, null, 0));
             return new Pattern(node);
         }
 
@@ -57,10 +57,9 @@ namespace ExpressionSimplifier.Pattern
 
         private static Pattern CreatePerformScalarOperationPattern()
         {
-            PatternNode node = new PatternNode(
-                new Type[] { typeof(Addition), typeof(Multiplication) });
-            node.AddChild(new PatternNode(typeof(Scalar)));
-            node.AddChild(new PatternNode(typeof(Scalar)));
+            PatternNode node = new PatternNode(new NodeType[] { NodeType.Addition, NodeType.Multiplication });
+            node.AddChild(new PatternNode(NodeType.Scalar));
+            node.AddChild(new PatternNode(NodeType.Scalar));
             return new Pattern(node);
         }
 

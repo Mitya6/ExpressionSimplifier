@@ -59,7 +59,7 @@ namespace ExpressionSimplifier
                 return false;
             }
 
-            if (zeroNode.Parent.GetType() == typeof(Addition) &&
+            if (zeroNode.Parent.Type == NodeType.Addition &&
                 (zeroNode.DisplayName == "0" || zeroNode.DisplayName == null))
             {
                 zeroNode.Parent.RemoveChild(zeroNode);
@@ -76,7 +76,7 @@ namespace ExpressionSimplifier
         /// </summary>
         public bool ContractOneChildAddition(ExpressionNode node)
         {
-            if (node.GetType() == typeof(Addition) &&
+            if (node.Type == NodeType.Addition &&
                 node.ChildrenCount() == 1)
             {
                 if (node.IsRoot)
@@ -185,7 +185,7 @@ namespace ExpressionSimplifier
         /// </summary>
         public bool PerformScalarOperation(ExpressionNode node)
         {
-            if (node.GetType() != typeof(Addition) && node.GetType() != typeof(Multiplication))
+            if (node.Type != NodeType.Addition && node.Type != NodeType.Multiplication)
             {
                 return false;
             }
@@ -212,7 +212,7 @@ namespace ExpressionSimplifier
                 double result = (double)((Scalar)(node.GetChild(0))).Value;
                 for (int i = 1; i < node.ChildrenCount(); i++)
                 {
-                    if (node.GetType() == typeof(Addition))
+                    if (node.Type == NodeType.Addition)
                     {
                         result += (double)((Scalar)(node.GetChild(i))).Value;
                     }
