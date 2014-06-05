@@ -13,6 +13,21 @@ namespace ExpressionSimplifier.Parse
     /// </summary>
     public static class ExpressionParser
     {
+        private static String matrixPattern = @"[a-zA-Z]+\[\d+,\d+\]";
+        private static String vectorPattern = @"[a-zA-Z]+\[\d+\]";
+        private static String variableNamePattern = @"[a-zA-Z]+";
+        private static String posIntegerPattern = @"[1-9]\d*";
+        private static String numberPattern = @"0|(-?[1-9]\d*(\.\d+)?)";
+
+        private static List<char[]> operators = new List<char[]>();
+
+        static ExpressionParser()
+        {
+            operators.Add(new char[] { '+', '-' });
+            operators.Add(new char[] { '*', '/' });
+        }
+
+
         /// <summary>
         /// Creates the tree representation of the given expression string
         /// and returns its root tree node.
@@ -21,7 +36,18 @@ namespace ExpressionSimplifier.Parse
         {
             if (CheckParentheses(expression))
             {
-                return Parse(expression);
+                try
+                {
+                    return Parse(expression);
+                }
+                catch (ApplicationException)
+                {
+                    return null;
+                }
+                catch (NullReferenceException)
+                {
+                    return null;
+                }
             }
             return null;
         }
@@ -42,29 +68,34 @@ namespace ExpressionSimplifier.Parse
             }
 
             // Matrix
-            if (expression.Contains(','))
+            if (Regex.IsMatch(expression, matrixPattern))
             {
                 String[] parts = expression.Split(new char[] { ',' });
-                node = new Operand(Regex.Match(expression, @"[a-zA-Z]+").Value,
-                    new Dimension(Int32.Parse(Regex.Match(parts[0], @"[0-9]+").Value),
-                    Int32.Parse(Regex.Match(parts[1], @"[0-9]+").Value)));
+                node = new Operand(Regex.Match(expression, variableNamePattern).Value,
+                    new Dimension(Int32.Parse(Regex.Match(parts[0], posIntegerPattern).Value),
+                    Int32.Parse(Regex.Match(parts[1], posIntegerPattern).Value)));
             }
             // Vector
-            else if (expression.Contains('['))
+            else if (Regex.IsMatch(expression, vectorPattern))
             {
-                node = new Operand(Regex.Match(expression, @"[a-zA-Z]+").Value,
-                    new Dimension(Int32.Parse(Regex.Match(expression, @"[0-9]+").Value),
+                node = new Operand(Regex.Match(expression, variableNamePattern).Value,
+                    new Dimension(Int32.Parse(Regex.Match(expression, posIntegerPattern).Value),
                     1));
             }
             // Scalar
-            else
+            else if (!Regex.IsMatch(expression, @"[^a-zA-Z\d-\.]"))
             {
-                node = new Scalar(Regex.Match(expression, @"[a-zA-Z0-9./]+").Value);
-            }
-
-            if (node == null)
-            {
-                throw new ApplicationException("Parse error!");
+                Match m = Regex.Match(expression, variableNamePattern);
+                // Scalar variable
+                if (m.Success)
+                {
+                    node = new Scalar(m.Value);
+                }
+                // Scalar with value
+                else if ((m = Regex.Match(expression, numberPattern)).Success)
+                {
+                    node = new Scalar(m.Value);
+                }
             }
 
             return node;
@@ -80,9 +111,6 @@ namespace ExpressionSimplifier.Parse
         {
             ExpressionNode node = null;
             int insideParentheses = 0;
-            List<char[]> operators = new List<char[]>();
-            operators.Add(new char[] { '+', '-' });
-            operators.Add(new char[] { '*', '/' });
 
             foreach (char[] ops in operators)
             {
@@ -105,40 +133,56 @@ namespace ExpressionSimplifier.Parse
                     {
                         if (insideParentheses == 0 && expression[i] == ops[j])
                         {
+                            String left = expression.Substring(0, i);
+                            String right = expression.Substring(i + 1, expression.Length - (i + 1));
+
                             switch (ops[j])
                             {
                                 case '+':
-                                case '-':
                                     {
                                         node = new Addition();
                                         break;
                                     }
+                                case '-':
+                                    {
+                                        if (left != "")
+                                            node = new Addition();
+                                        else
+                                        {
+                                            node = new Scalar(expression);
+                                            return node;
+                                        }
+                                        break;
+                                    }
                                 case '*':
+                                    {
+                                        node = new Multiplication();
+                                        break;
+                                    }
                                 case '/':
                                     {
+                                        RemoveOuterParentheses(ref right);
+                                        if (!Regex.IsMatch(right, "^(" + numberPattern + ")$"))
+                                        {
+                                            throw new ApplicationException("Error: Division by non scalar!");
+                                        }
                                         node = new Multiplication();
                                         break;
                                     }
                             }
 
-                            String left = expression.Substring(0, i);
-                            String right = expression.Substring(i + 1, expression.Length - (i + 1));
-
-                            if (left != "")
-                            {
-                                node.AddChild(Parse(left)); 
-                            }
+                            node.AddChild(Parse(left));
 
                             if (ops[j] == '-')
                             {
-                                node.AddChild(new Multiplication());
-                                node.GetChild(node.ChildrenCount() - 1).AddChild(new Scalar("-1"));
-                                node.GetChild(node.ChildrenCount() - 1).AddChild(Parse(right));
+                                Multiplication mul = new Multiplication();
+                                mul.AddChild(new Scalar("-1"));
+                                mul.AddChild(Parse(right));
+                                node.AddChild(mul);
                             }
                             else if (ops[j] == '/')
                             {
-                                node.AddChild(new Scalar(Regex.Match("1/" + right,
-                                    @"[a-zA-Z0-9./]+").Value));
+                                node.AddChild(new Scalar("1/" + right));
                             }
                             else
                             {
