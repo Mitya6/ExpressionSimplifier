@@ -15,27 +15,23 @@ namespace ExpressionSimplifier
         {
             this.type = NodeType.Scalar;
             this.dimension = new Dimension(1, 1);
+            this.Expr = expr;
 
-            if (expr != null)
-            {
-                this.Expr = expr;
-            }
+            this.Value = Convert(name);
 
-            double number;
-            if (this.TryConvert(name, out number))
+            if (Value != null)
             {
-                this.Value = number;
-                this.DisplayName = number.ToString();
+                this.DisplayName = String.Format("{0:0.####}", this.Value);
             }
             else
             {
-                this.Value = null;
                 this.DisplayName = name;
             }
         }
 
-        private bool TryConvert(String name, out double number)
+        private double? Convert(String name)
         {
+            double? number = null;
             if (name.Contains('/'))
             {
                 List<String> stringList = name.Split('/').ToList();
@@ -51,13 +47,17 @@ namespace ExpressionSimplifier
                 if (result1 && result2)
                 {
                     number = n1 / n2;
-                    return true;
                 }
-
-                number = Double.NaN;
-                return false;
             }
-            return Double.TryParse(name, out number);
+            else
+            {
+                double n;
+                if (Double.TryParse(name, out n))
+                {
+                    number = n;
+                }
+            }
+            return number;
         }
     }
 }

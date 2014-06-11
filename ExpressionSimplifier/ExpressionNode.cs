@@ -15,11 +15,7 @@ namespace ExpressionSimplifier
 
         public ExpressionNode(String name, Expression expr = null)
         {
-            if (expr != null)
-            {
-                this.Expr = expr;
-            }
-
+            this.Expr = expr;
             this.DisplayName = name;
         }
 
