@@ -16,7 +16,7 @@ namespace ExpressionSimplifier.Pattern
             this.pattern = pattern;
         }
 
-        public static void DeleteZeroAdditionFirst(Expression expr)
+        /*public static void DeleteZeroAdditionFirst(Expression expr)
         {
             Pattern pattern = CreateDeleteZeroAdditionPattern();
             ExpressionNode parent = pattern.FindFirst(expr);
@@ -36,23 +36,24 @@ namespace ExpressionSimplifier.Pattern
                 return false;
             }));
 
-            expr.DeleteZeroAddition(zeroChild);
-        }
+            zeroChild.DeleteZeroAdditionLeaf();
+        }*/
 
-        private static Pattern CreateDeleteZeroAdditionPattern()
+        /*private static Pattern CreateDeleteZeroAdditionPattern()
         {
             PatternNode node = new PatternNode(NodeType.Addition);
             node.AddChild(new PatternNode(NodeType.Scalar, null, 0));
             return new Pattern(node);
-        }
+        }*/
 
         public static void PerformScalarOperationFirst(Expression expr)
         {
             Pattern pattern = CreatePerformScalarOperationPattern();
-            ExpressionNode parent = pattern.FindFirst(expr);
+            ExpressionNode scalarOperationNode = pattern.FindFirst(expr);
 
-            if (parent == null) return;
-            expr.PerformScalarOperation(parent);
+            if (scalarOperationNode == null) return;
+
+            scalarOperationNode.PerformScalarOperation();
         }
 
         private static Pattern CreatePerformScalarOperationPattern()

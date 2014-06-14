@@ -97,14 +97,14 @@ namespace WpfGui
 
         private void FillTransformationsComboBox()
         {
-            MethodInfo[] methodInfos = typeof(ExpressionSimplifier.Expression).GetMethods(
+            MethodInfo[] methodInfos = typeof(ExpressionSimplifier.ExpressionNode).GetMethods(
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             List<String> methodNames = new List<String>();
             foreach (MethodInfo mi in methodInfos)
             {
                 methodNames.Add(mi.Name);
             }
-            methodNames = methodNames.SkipWhile(item => item != "DeleteZeroAddition").ToList();
+            methodNames = methodNames.SkipWhile(item => item != "Raise").ToList();
 
             cbTransformations.ItemsSource = methodNames;
         }
@@ -144,9 +144,9 @@ namespace WpfGui
         {
             if (cbTransformations.SelectedItem == null) return;
 
-            MethodInfo mi = typeof(ExpressionSimplifier.Expression).GetTypeInfo().GetDeclaredMethod(
+            MethodInfo mi = typeof(ExpressionSimplifier.ExpressionNode).GetTypeInfo().GetDeclaredMethod(
                 cbTransformations.SelectedItem.ToString());
-            mi.Invoke(clickedNode.Expr, new Object[] { clickedNode });
+            mi.Invoke(clickedNode, null);
         }
 
         private void btnApplyFirst_Click(object sender, RoutedEventArgs e)
