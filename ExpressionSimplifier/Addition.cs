@@ -8,7 +8,8 @@ namespace ExpressionSimplifier
 {
     class Addition : ExpressionNode
     {
-        public Addition() : base("+") 
+        public Addition()
+            : base("+")
         {
             this.type = NodeType.Addition;
         }
@@ -30,21 +31,38 @@ namespace ExpressionSimplifier
             return child0.GetDimension();
         }
 
-        public override int Cost()
+        public override int ComputationCost()
         {
             Dimension dim = ((ExpressionNode)(this.children[0])).GetDimension();
 
             int cost = 0;
-            for (int i = 0; i < this.children.Count; i++)
+            for (int i = 0; i < this.ChildrenCount(); i++)
             {
-                cost += ((ExpressionNode)(this.children[i])).Cost();
+                cost += ((ExpressionNode)(this.GetChild(i))).ComputationCost();
                 if (i != 0)
                 {
-                    cost += dim.M * dim.N; 
+                    cost += dim.M * dim.N;
                 }
             }
 
             return cost;
+        }
+
+        public override int TempStorageCost()
+        {
+            Dimension dim = this.GetDimension();
+
+            int cost = 0;
+            for (int i = 0; i < this.ChildrenCount(); i++)
+            {
+                cost += ((ExpressionNode)(this.GetChild(i))).TempStorageCost();
+                if (i >= 2)
+                {
+                    cost += dim.M * dim.N;
+                }
+            }
+
+            return cost + dim.M * dim.N;
         }
     }
 }

@@ -25,7 +25,13 @@ namespace ExpressionSimplifier
         /// <summary>
         /// Calculates the computation cost of the node recursively.
         /// </summary>
-        public abstract int Cost();
+        public abstract int ComputationCost();
+
+        /// <summary>
+        /// Returns the count of temporarily stored floating point numbers
+        /// needed to calculate the node.
+        /// </summary>
+        public abstract int TempStorageCost();
 
         public bool IsSameOperationAsParent()
         {

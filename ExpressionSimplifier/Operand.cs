@@ -26,7 +26,12 @@ namespace ExpressionSimplifier
             return this.dimension;
         }
 
-        public override int Cost()
+        public override int ComputationCost()
+        {
+            return 0;
+        }
+
+        public override int TempStorageCost()
         {
             return 0;
         }

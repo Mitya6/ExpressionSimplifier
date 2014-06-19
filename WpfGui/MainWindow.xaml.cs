@@ -34,7 +34,11 @@ namespace WpfGui
                 List<String> lines = LineByLineReader.ReadInput(path);
                 foreach (String line in lines)
                 {
-                    expressions.Add(ExpressionParser.BuildTree(line));
+                    ExpressionNode expr = ExpressionParser.BuildTree(line);
+                    if (expr != null)
+                    {
+                        expressions.Add(expr);                        
+                    }
                 }
 
                 this.lbExpressions.ItemsSource = this.expressions;
@@ -105,7 +109,8 @@ namespace WpfGui
                 try
                 {
                     this.tbDimension.Text = "Dimension: " + expr.GetDimension().ToString();
-                    this.tbCost.Text = "Cost: " + expr.Cost().ToString();
+                    this.tbComputationCost.Text = "Computation cost: " + expr.ComputationCost().ToString();
+                    this.tbStorageCost.Text = "Storage cost: " + expr.TempStorageCost().ToString();
                 }
                 catch (ApplicationException appEx)
                 {
@@ -119,7 +124,8 @@ namespace WpfGui
             this.tvTree.Items.Clear();
             this.tbError.Text = "";
             this.tbDimension.Text = "";
-            this.tbCost.Text = "";
+            this.tbComputationCost.Text = "";
+            this.tbStorageCost.Text = "";
         }
 
         private TreeViewItem PopulateTreeView(ExpressionNode expNode)
