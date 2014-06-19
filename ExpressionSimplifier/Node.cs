@@ -104,6 +104,16 @@ namespace ExpressionSimplifier
             }
             return depth + 1;
         }
+
+        public Node FindRoot()
+        {
+            if (this.Parent == null)
+            {
+                return this;
+            }
+            return this.Parent.FindRoot();
+        }
+
         public BFSIterator GetBFSIterator()
         {
             return new BFSIterator(this);

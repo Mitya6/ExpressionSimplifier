@@ -15,7 +15,7 @@ namespace ExpressionSimplifier
             this.type = NodeType.Operand;
         }
 
-        public Operand(String name, Dimension dimension, Expression expr = null) : base(name + dimension.ToString(), expr)
+        public Operand(String name, Dimension dimension) : base(name + dimension.ToString())
         {
             this.type = NodeType.Operand;
             this.dimension = dimension;

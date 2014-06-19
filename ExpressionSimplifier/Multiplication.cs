@@ -8,7 +8,7 @@ namespace ExpressionSimplifier
 {
     class Multiplication : ExpressionNode
     {
-        public Multiplication(Expression expr = null) : base("*", expr) 
+        public Multiplication() : base("*") 
         {
             this.type = NodeType.Multiplication;
         }

@@ -11,11 +11,10 @@ namespace ExpressionSimplifier
 
         public const double Epsilon = 0.00001;
 
-        public Scalar(String name, Expression expr = null)
+        public Scalar(String name)
         {
             this.type = NodeType.Scalar;
             this.dimension = new Dimension(1, 1);
-            this.Expr = expr;
 
             this.Value = Convert(name);
 

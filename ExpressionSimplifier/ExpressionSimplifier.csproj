@@ -64,7 +64,6 @@
   <ItemGroup>
     <Compile Include="Addition.cs" />
     <Compile Include="Dimension.cs" />
-    <Compile Include="Expression.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Parse\ExpressionParser.cs" />
     <Compile Include="Parse\LineByLineReader.cs" />

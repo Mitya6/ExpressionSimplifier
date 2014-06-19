@@ -46,14 +46,14 @@ namespace ExpressionSimplifier.Pattern
             return new Pattern(node);
         }*/
 
-        public static void PerformScalarOperationFirst(Expression expr)
+        public static ExpressionNode PerformScalarOperationFirst(ExpressionNode root)
         {
             Pattern pattern = CreatePerformScalarOperationPattern();
-            ExpressionNode scalarOperationNode = pattern.FindFirst(expr);
+            ExpressionNode scalarOperationNode = pattern.FindFirst(root);
 
-            if (scalarOperationNode == null) return;
+            if (scalarOperationNode == null) return null;
 
-            scalarOperationNode.PerformScalarOperation();
+            return scalarOperationNode.PerformScalarOperation();
         }
 
         private static Pattern CreatePerformScalarOperationPattern()
@@ -65,9 +65,9 @@ namespace ExpressionSimplifier.Pattern
         }
 
 
-        private ExpressionNode FindFirst(Expression expr)
+        private ExpressionNode FindFirst(ExpressionNode root)
         {
-            BFSIterator iter = expr.Root.GetBFSIterator();
+            BFSIterator iter = root.GetBFSIterator();
             while (iter.HasNext())
             {
                 ExpressionNode current = (ExpressionNode)(iter.Next());

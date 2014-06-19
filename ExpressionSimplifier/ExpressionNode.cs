@@ -8,14 +8,12 @@ namespace ExpressionSimplifier
 {
     public abstract class ExpressionNode : Node
     {
-        public Expression Expr { get; set; }
         public String DisplayName { get; set; }
 
         public ExpressionNode() { }
 
-        public ExpressionNode(String name, Expression expr = null)
+        public ExpressionNode(String name)
         {
-            this.Expr = expr;
             this.DisplayName = name;
         }
 
@@ -123,28 +121,21 @@ namespace ExpressionSimplifier
         /// Raises an operation node to its parent node by unifying them if they
         /// are of the same type of operation. Preserves the order of child nodes.
         /// </summary>
-        public bool Raise()
+        public ExpressionNode Raise()
         {
-            ExpressionNode parent = (ExpressionNode)(this.Parent);
-
-            if (parent != null)
+            if (this.Parent != null && this.IsSameOperationAsParent())
             {
-                if (this.IsSameOperationAsParent())
+                int idx = Parent.IndexOf(this);
+                for (int i = this.ChildrenCount() - 1; i >= 0; i--)
                 {
-                    int idx = parent.IndexOf(this);
-                    parent.RemoveChild(this);
-
-                    for (int i = this.ChildrenCount() - 1; i >= 0; i--)
-                    {
-                        ExpressionNode current = (ExpressionNode)(this.GetChild(i));
-                        this.RemoveChild(current);
-                        parent.InsertChild(current, idx);
-                    }
-                    return true;
+                    Node current = this.GetChild(i);
+                    this.RemoveChild(current);
+                    Parent.InsertChild(current, idx);
                 }
+                Parent.RemoveChild(this);
             }
 
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -206,24 +197,16 @@ namespace ExpressionSimplifier
         /// <summary>
         /// Performs the operation stored in the given node if all its children are scalars.
         /// </summary>
-        public bool PerformScalarOperation()
+        public ExpressionNode PerformScalarOperation()
         {
             if (this.Type != NodeType.Addition && this.Type != NodeType.Multiplication)
-            {
-                return false;
-            }
+                return null;
 
             // Check whether all children are of type scalar with values
             bool allChildrenScalar = true;
             for (int i = 0; i < this.ChildrenCount(); i++)
             {
-                if (!(this.GetChild(i) is Scalar))
-                {
-                    allChildrenScalar = false;
-                    break;
-                }
-
-                if (((Scalar)(this.GetChild(i))).Value == null)
+                if (!(this.GetChild(i) is Scalar) || ((Scalar)(this.GetChild(i))).Value == null)
                 {
                     allChildrenScalar = false;
                     break;
@@ -245,22 +228,21 @@ namespace ExpressionSimplifier
                     }
                 }
 
-                ExpressionNode newNode = new Scalar(result.ToString(), this.Expr);
-                if (this.Parent != null)
+                ExpressionNode newNode = new Scalar(result.ToString());
+                if (!this.IsRoot)
                 {
                     this.Parent.ReplaceChild(this, newNode);
                 }
                 else
                 {
-                    this.Expr.Root = newNode;
+                    return newNode;
                 }
-                return true;
             }
 
-            return false;
+            return null;
         }
 
-        public bool OrderChildren()
+        public ExpressionNode OrderChildren()
         {
             if (this.Type != NodeType.Multiplication)
             {
@@ -284,10 +266,8 @@ namespace ExpressionSimplifier
                 this.children.AddRange(otherOperands);
                 this.children.AddRange(additionNodes);
                 this.children.AddRange(multiplicationNodes);
-
-                return true;
             }
-            return false;
+            return null;
         }
 
         #endregion
