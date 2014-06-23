@@ -16,6 +16,11 @@ namespace ExpressionSimplifier
 
         public override Dimension GetDimension()
         {
+            if (cache.DimensionValid)
+            {
+                return cache.Dim;
+            }
+
             ExpressionNode child0 = (ExpressionNode)(this.children[0]);
 
             foreach (ExpressionNode child in this.children)
@@ -28,11 +33,18 @@ namespace ExpressionSimplifier
                 }
             }
 
-            return child0.GetDimension();
+            Dimension dim = child0.GetDimension();
+            cache.Dim = dim;
+            return dim;
         }
 
         public override int ComputationCost()
         {
+            if (cache.ComputationCostValid)
+            {
+                return cache.ComputationCost;
+            }
+
             Dimension dim = ((ExpressionNode)(this.children[0])).GetDimension();
 
             int cost = 0;
@@ -45,11 +57,17 @@ namespace ExpressionSimplifier
                 }
             }
 
+            cache.ComputationCost = cost;
             return cost;
         }
 
         public override int TempStorageCost()
         {
+            if (cache.StorageCostValid)
+            {
+                return cache.StorageCost;
+            }
+
             Dimension dim = this.GetDimension();
 
             int cost = 0;
@@ -62,7 +80,9 @@ namespace ExpressionSimplifier
                 }
             }
 
-            return cost + dim.M * dim.N;
+            int value = cost + dim.M * dim.N;
+            cache.StorageCost = value;
+            return value;
         }
     }
 }

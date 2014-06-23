@@ -24,37 +24,27 @@ namespace WpfGui
             InitializeComponent();
 
             ToolTipService.ShowDurationProperty.OverrideMetadata(typeof(DependencyObject), new FrameworkPropertyMetadata(Int32.MaxValue));
+
+            LoadExpressions();
+
+            FillTransformationsComboBox();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void LoadExpressions()
         {
-            try
+            String path = "Input.txt";
+
+            List<String> lines = LineByLineReader.ReadInput(path);
+            foreach (String line in lines)
             {
-                String path = "Input.txt";
-                List<String> lines = LineByLineReader.ReadInput(path);
-                foreach (String line in lines)
+                ExpressionNode expr = ExpressionParser.BuildTree(line);
+                if (expr != null)
                 {
-                    ExpressionNode expr = ExpressionParser.BuildTree(line);
-                    if (expr != null)
-                    {
-                        expressions.Add(expr);                        
-                    }
+                    this.expressions.Add(expr);
                 }
-
-                this.lbExpressions.ItemsSource = this.expressions;
-
-                FillTransformationsComboBox();
             }
-            catch (Exception ex)
-            {
-                // Workaround
-                // 64bit machines are unable to properly throw the errors during a Window_Loaded event.
-                // http://stackoverflow.com/questions/4807122/wpf-showdialog-swallowing-exceptions-during-window-load
-                BackgroundWorker loaderExceptionWorker = new BackgroundWorker();
-                loaderExceptionWorker.DoWork += ((exceptionWorkerSender, runWorkerCompletedEventArgs) => { runWorkerCompletedEventArgs.Result = runWorkerCompletedEventArgs.Argument; });
-                loaderExceptionWorker.RunWorkerCompleted += ((exceptionWorkerSender, runWorkerCompletedEventArgs) => { throw (Exception)runWorkerCompletedEventArgs.Result; });
-                loaderExceptionWorker.RunWorkerAsync(ex);
-            }
+
+            this.lbExpressions.ItemsSource = this.expressions;
         }
 
         private void FillTransformationsComboBox()

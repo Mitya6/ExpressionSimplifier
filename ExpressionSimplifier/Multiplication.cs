@@ -16,12 +16,19 @@ namespace ExpressionSimplifier
 
         public override Dimension GetDimension()
         {
+            if (cache.DimensionValid)
+            {
+                return cache.Dim;
+            }
+
             Dimension resultDim = ((ExpressionNode)(this.children[0])).GetDimension();
             for (int i = 1; i < this.children.Count; i++)
             {
                 resultDim = GetDimension(
                     resultDim, ((ExpressionNode)(this.children[i])).GetDimension());
             }
+
+            cache.Dim = resultDim;
             return resultDim;
         }
 
@@ -55,6 +62,11 @@ namespace ExpressionSimplifier
 
         public override int ComputationCost()
         {
+            if (cache.ComputationCostValid)
+            {
+                return cache.ComputationCost;
+            }
+
             int cost = ((ExpressionNode)(this.GetChild(0))).ComputationCost();
             for (int i = 1; i < this.ChildrenCount(); i++)
             {
@@ -62,6 +74,8 @@ namespace ExpressionSimplifier
                     ((ExpressionNode)(this.GetChild(i))).GetDimension());
                 cost += ((ExpressionNode)(this.GetChild(i))).ComputationCost();
             }
+
+            cache.ComputationCost = cost;
             return cost;
         }
 
@@ -88,6 +102,11 @@ namespace ExpressionSimplifier
 
         public override int TempStorageCost()
         {
+            if (cache.StorageCostValid)
+            {
+                return cache.StorageCost;
+            }
+
             int cost = 0;
             for (int i = 0; i < this.ChildrenCount(); i++)
             {
@@ -101,7 +120,9 @@ namespace ExpressionSimplifier
 
             Dimension dim = this.GetDimension();
 
-            return cost + dim.M * dim.N;
+            int value = cost + dim.M * dim.N;
+            cache.StorageCost = value;
+            return value;
         }
 
         private int TempStorageCost(Dimension left, Dimension right)

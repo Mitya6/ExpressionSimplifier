@@ -10,6 +10,8 @@ namespace ExpressionSimplifier
     {
         public String DisplayName { get; set; }
 
+        protected Cache cache;
+
         public ExpressionNode() { }
 
         public ExpressionNode(String name)
@@ -33,17 +35,16 @@ namespace ExpressionSimplifier
         /// </summary>
         public abstract int TempStorageCost();
 
-        public bool IsSameOperationAsParent()
-        {
-            return (this.Type == NodeType.Addition &&
-                this.Parent.Type == NodeType.Addition) ||
-                (this.Type == NodeType.Multiplication &&
-                this.Parent.Type == NodeType.Multiplication);
-        }
-
         public override String ToString()
         {
-            return ToString(false);
+            if (cache.StringValid)
+            {
+                return cache.StringValue;
+            }
+
+            String value = ToString(false);
+            cache.StringValue = value;
+            return value;
         }
 
         private String ToString(bool hasMultiplicationAbove)
@@ -74,54 +75,25 @@ namespace ExpressionSimplifier
             return s;
         }
 
-
-        #region Transformations
-
-        /// <summary>
-        /// Deletes the given node if it is zero or empty.
-        /// </summary>
-        /*public bool DeleteZeroAdditionLeaf()
+        public bool IsSameOperationAsParent()
         {
-            // Return if zeroNode is the root node
-            if (this.Parent == null)
-            {
-                return false;
-            }
+            return (this.Type == NodeType.Addition &&
+                this.Parent.Type == NodeType.Addition) ||
+                (this.Type == NodeType.Multiplication &&
+                this.Parent.Type == NodeType.Multiplication);
+        }
 
-            if (this.Parent.Type == NodeType.Addition && this.Type == NodeType.Scalar
-                && ((Scalar)this).Value == 0)
-            {
-                this.Parent.RemoveChild(this);
-                return true;
-            }
-
-            return false;
-        }*/
-
-        /// <summary>
-        /// Removes the given addition node if it has only one child and
-        /// connects its child to its parent node
-        /// </summary>
-        /*public bool ContractOneChildAddition()
+        public void Invalidate()
         {
-            if (this.Type == NodeType.Addition && this.ChildrenCount() == 1)
+            cache.Invaildate();
+            if (this.Parent != null)
             {
-                if (this.IsRoot)
-                {
-                    this.Expr.Root = (ExpressionNode)(this.GetChild(0));
-                }
-                else
-                {
-                    this.Parent.AddChild(this.GetChild(0));
-                    this.Parent.RemoveChild(this);
-                }
-
-                this.ClearChildren();
-                return true;
+                ((ExpressionNode)this.Parent).Invalidate();
             }
+        }
 
-            return false;
-        }*/
+
+        #region Transformations       
 
         /// <summary>
         /// Raises an operation node to its parent node by unifying them if they
@@ -131,6 +103,8 @@ namespace ExpressionSimplifier
         {
             if (this.Parent != null && this.IsSameOperationAsParent())
             {
+                Invalidate();
+
                 int idx = Parent.IndexOf(this);
                 for (int i = this.ChildrenCount() - 1; i >= 0; i--)
                 {
@@ -143,62 +117,6 @@ namespace ExpressionSimplifier
 
             return null;
         }
-
-        /// <summary>
-        /// Rotates the tree around the given child node and its parent node to the left.
-        /// </summary>
-        /*public bool RotateLeft()
-        {
-            return Rotate(true);
-        }*/
-
-        /// <summary>
-        /// Rotates the tree around the given child node and its parent node to the right.
-        /// </summary>
-        /*public bool RotateRight()
-        {
-            return Rotate(false);
-        }*/
-
-        /*private bool Rotate(bool left)
-        {
-            ExpressionNode parent = (ExpressionNode)(this.Parent);
-
-            if (parent != null)
-            {
-                if (this.IsSameOperationAsParent())
-                {
-                    parent.RemoveChild(this);
-
-                    // If parent is not the root node
-                    if (parent.Parent != null)
-                    {
-                        int parentIdx = parent.Parent.IndexOf(parent);
-
-                        parent.Parent.InsertChild(this, parentIdx);
-
-                        parent.Parent.RemoveChild(parent);
-                    }
-                    // parent is the root node
-                    else
-                    {
-                        this.Expr.Root = this;
-                    }
-
-                    if (left)
-                    {
-                        this.InsertChild(parent, 0);
-                    }
-                    else
-                    {
-                        this.AddChild(parent);
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        }*/
 
         /// <summary>
         /// Performs the operation stored in the given node if all its children are scalars.
@@ -221,6 +139,8 @@ namespace ExpressionSimplifier
 
             if (allChildrenScalar)
             {
+                Invalidate();
+
                 double result = (double)((Scalar)(this.GetChild(0))).Value;
                 for (int i = 1; i < this.ChildrenCount(); i++)
                 {
@@ -252,6 +172,8 @@ namespace ExpressionSimplifier
         {
             if (this.Type != NodeType.Multiplication)
             {
+                Invalidate();
+
                 var scalarsWithValue = this.children
                     .Where(child => child.Type == NodeType.Scalar && ((Scalar)child).Value != null)
                     .OrderBy(child => ((Scalar)child).Value).ToList();

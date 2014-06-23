@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Addition.cs" />
+    <Compile Include="Cache.cs" />
     <Compile Include="Dimension.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Parse\ExpressionParser.cs" />
