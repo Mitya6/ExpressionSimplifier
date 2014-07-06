@@ -13,7 +13,7 @@ namespace ExpressionSimplifier
         protected NodeType type;
 
         public NodeType Type { get { return this.type; } }
-        public Node Parent { get; set; }
+        public WeakReference Parent { get; set; }
         public bool IsLeaf { get { return this.children.Count == 0; } }
         public bool IsRoot { get { return this.Parent == null; } }
 
@@ -30,6 +30,11 @@ namespace ExpressionSimplifier
             return this.children.FirstOrDefault(predicate);
         }
 
+        public Node GetLastChild()
+        {
+            return this.children.Last();
+        }
+
         public int ChildrenCount()
         {
             return this.children.Count;
@@ -43,13 +48,13 @@ namespace ExpressionSimplifier
         public void AddChild(Node child)
         {
             this.children.Add(child);
-            child.Parent = this;
+            child.Parent = new WeakReference(this);
         }
 
         public void InsertChild(Node child, int idx)
         {
             this.children.Insert(idx, child);
-            child.Parent = this;
+            child.Parent = new WeakReference(this);
         }
 
         public void RemoveChild(int idx)
@@ -103,15 +108,6 @@ namespace ExpressionSimplifier
                 }
             }
             return depth + 1;
-        }
-
-        public Node FindRoot()
-        {
-            if (this.Parent == null)
-            {
-                return this;
-            }
-            return this.Parent.FindRoot();
         }
 
         public BFSIterator GetBFSIterator()

@@ -63,12 +63,15 @@ namespace ExpressionSimplifier
             }
         }
 
+        public bool ChildrenOrdered { get; set; }
+
         public void Invaildate()
         {
             dimensionValid = false;
             computationCostValid = false;
             storageCostValid = false;
             stringValid = false;
+            ChildrenOrdered = false;
         }
     }
 }
