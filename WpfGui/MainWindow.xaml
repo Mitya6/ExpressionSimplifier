@@ -1,4 +1,7 @@
-﻿<Window x:Class="WpfGui.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="MainWindow" Height="600" Width="1000" >
+﻿<Window x:Class="WpfGui.MainWindow" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="600" Width="1000" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -15,9 +18,9 @@
             <TextBlock x:Name="tbComputationCost" DockPanel.Dock="Bottom"/>
             <TextBlock x:Name="tbStorageCost" DockPanel.Dock="Bottom" />
             <TextBlock x:Name="tbDimension" DockPanel.Dock="Bottom" />
-            
+
             <TreeView x:Name="tvTree" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0"/>
-        </DockPanel>        
+        </DockPanel>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="Black" ShowsPreview="True" Width="5" />
 
     </Grid>

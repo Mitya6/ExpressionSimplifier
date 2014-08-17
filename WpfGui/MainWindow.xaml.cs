@@ -118,9 +118,9 @@ namespace WpfGui
             this.tbStorageCost.Text = "";
         }
 
-        private TreeViewItem PopulateTreeView(ExpressionNode expNode)
+        private CustomTreeViewItem PopulateTreeView(ExpressionNode expNode)
         {
-            TreeViewItem tvItem = new TreeViewItem();
+            CustomTreeViewItem tvItem = new CustomTreeViewItem();
 
             // Create button to handle on click transformations for the node.
             Button button = new Button() { Content = expNode.DisplayName, Tag = expNode, ToolTip = expNode.ToString() };
